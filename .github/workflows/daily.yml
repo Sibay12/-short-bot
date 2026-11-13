@@ -29,20 +29,9 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      # Pixabay requires API search responses to be cached for 24 hours.
-      - name: Restore Pixabay search cache
-        uses: actions/cache@v4
-        with:
-          path: work/pixabay_cache.json
-          key: pixabay-video-cache-${{ github.run_id }}
-          restore-keys: |
-            pixabay-video-cache-
-
       - name: Make and upload Short
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
-          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }} # optional fallback
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
