@@ -11,7 +11,7 @@ WORK.mkdir(exist_ok=True)
 HISTORY = ROOT / "topics_done.json"
 
 GEMINI_KEY = os.environ["GEMINI_API_KEY"]
-MODELS = [os.getenv("GEMINI_MODEL", "gemini-2.5-flash"), "gemini-2.5-flash-lite"]
+MODELS = [os.getenv("GEMINI_MODEL", "gemini-3.8-flash"), "gemini-3.5-flash-lite"]
 VOICE = os.getenv("TTS_VOICE", "hi-IN-MadhurNeural")  # Female voice option: hi-IN-SwaraNeural
 RATE = os.getenv("TTS_RATE", "+8%")
 PRIVACY = os.getenv("PRIVACY", "private")  # private / unlisted / public
