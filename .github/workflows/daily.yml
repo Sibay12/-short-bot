@@ -2,12 +2,12 @@ name: Daily Short
 
 on:
   schedule:
-    - cron: "30 11 * * *"   # रोज़ शाम 5:00 बजे IST (UTC 11:30)
+    - cron: "30 11 * * *"   # Daily at 5:00 PM India Standard Time (UTC 11:30)
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "1 = सिर्फ वीडियो बनाओ, अपलोड मत करो"
-        default: "0"
+        description: "1 = create the video only; do not upload"
+        default: "1"
 
 permissions:
   contents: write
@@ -24,20 +24,30 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Install ffmpeg + Hindi font
+      - name: Install FFmpeg and Devanagari font
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-core
 
       - run: pip install -r requirements.txt
 
+      # Pixabay requires API search responses to be cached for 24 hours.
+      - name: Restore Pixabay search cache
+        uses: actions/cache@v4
+        with:
+          path: work/pixabay_cache.json
+          key: pixabay-video-cache-${{ github.run_id }}
+          restore-keys: |
+            pixabay-video-cache-
+
       - name: Make and upload Short
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }} # optional fallback
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           PRIVACY: ${{ vars.PRIVACY || 'private' }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          DRY_RUN: ${{ github.event_name == 'schedule' && '0' || inputs.dry_run || '1' }}
         run: python make_short.py
 
       - name: Backup copy of the video
