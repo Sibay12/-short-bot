@@ -47,6 +47,7 @@ jobs:
           path: |
             work/final.mp4
             work/script.json
+            work/visual_sources.txt
           retention-days: 3
           if-no-files-found: ignore
 
